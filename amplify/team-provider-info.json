@@ -1,0 +1,26 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-cv2gether-dev-234938-authRole",
+      "UnauthRoleArn": "arn:aws:iam::156378720077:role/amplify-cv2gether-dev-234938-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::156378720077:role/amplify-cv2gether-dev-234938-authRole",
+      "Region": "ap-southeast-1",
+      "DeploymentBucketName": "amplify-cv2gether-dev-234938-deployment",
+      "UnauthRoleName": "amplify-cv2gether-dev-234938-unauthRole",
+      "StackName": "amplify-cv2gether-dev-234938",
+      "StackId": "arn:aws:cloudformation:ap-southeast-1:156378720077:stack/amplify-cv2gether-dev-234938/a657cb10-78d6-11ee-9d89-0ac1e5a87f08",
+      "AmplifyAppId": "d1gqx11vmv8h2i"
+    },
+    "categories": {
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d1gqx11vmv8h2i",
+          "type": "manual"
+        }
+      },
+      "api": {
+        "cv2gether": {}
+      }
+    }
+  }
+}

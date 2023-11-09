@@ -1,31 +1,73 @@
 import { Button, CircularProgress, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
+import { Amplify, API, graphqlOperation } from 'aws-amplify';
 import { CONFIG_THEME } from 'config/constant';
 import { motion } from 'framer-motion';
 import React from 'react';
 import Snowfall from 'react-snowfall';
 
+import awsconfig from '../../aws-exports';
+import { createConfession } from '../../graphql/mutations';
+
+Amplify.configure(awsconfig);
+
+const cfsWebhooks =
+  'https://discord.com/api/webhooks/1172223984423682098/QILDFWX5d0qGWM585At7wuYkxtEUiJ056TQBLXkw0yCzHT3lUZiB7izDFs0yNMYNJw8F';
+
 const Result = () => {
-  const [inp, setInp] = React.useState('');
+  const [description, setDescription] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const [success, setIsSuccess] = React.useState(false);
 
-  const onChangeInput = e => {
-    setInp(e.target.value);
+  const onChangeInput = (e, field) => {
+    switch (field) {
+      case 'description':
+        setDescription(e.target.value);
+        break;
+      default:
+        break;
+    }
   };
 
   const submitResult = async () => {
     setLoading(true);
-    if (!inp || !inp.trim()) {
+    if (!description || !description.trim()) {
       alert('Bạn chưa nhập nội dung nè >!<');
       setLoading(false);
       return;
     }
+
+    try {
+      await API.graphql(
+        graphqlOperation(createConfession, {
+          input: {
+            description,
+            status: 'New',
+            type: 'cfs',
+          },
+        })
+      );
+    } catch (error) {
+      alert('Lỗi không mong muốn bạn hãy reload lại nhé!');
+      setLoading(false);
+      return;
+    }
+
+    // Send to discord
+    const options = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: description }),
+    };
+    fetch(cfsWebhooks, options);
+
     setIsSuccess(true);
   };
 
   const backForm = () => {
+    setLoading(false);
     setIsSuccess(false);
+    setDescription('');
   };
 
   return (
@@ -75,14 +117,13 @@ const Result = () => {
             align='center'
             color={'primary'}
             variant='h3'
-            marginTop='160px'
             marginBottom='100px'
             sx={{
               color: CONFIG_THEME.color.blue900,
               fontWeight: 'bold',
               fontStyle: 'italic',
-
               marginBottom: 5,
+              marginTop: 10,
             }}
           >
             <Box>CONFESSION</Box>
@@ -92,7 +133,7 @@ const Result = () => {
           <TextField
             id='outlined-multiline-static'
             multiline
-            rows='7'
+            rows='10'
             variant='outlined'
             color={'primary'}
             label='Nhập nội dụng bạn muốn gửi'
@@ -120,8 +161,8 @@ const Result = () => {
                 },
               },
             }}
-            value={inp}
-            onChange={onChangeInput}
+            value={description}
+            onChange={e => onChangeInput(e, 'description')}
           ></TextField>
           <Box display='flex'>
             <Button
@@ -165,8 +206,8 @@ const Result = () => {
             initial={{ opacity: 0, scale: 0.5 }}
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{
-              delay: 0.75,
-              x: { duration: 0.5 },
+              delay: 0.25,
+              x: { duration: 0.25 },
               default: { ease: 'linear' },
             }}
           >
